@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 
-from typing import Optional
+import app.v1 as v1
 
 app = FastAPI(title="FastAPICore", debug=True)
 
@@ -25,6 +25,4 @@ async def startup():
     redis = await aioredis.create_redis_pool("redis://localhost")
     await FastAPILimiter.init(redis)
 
-@app.get("/", dependencies=[Depends(RateLimiter(times=2, seconds=5))])
-async def home_event():
-    return {"Hello":"world"}
+app.include_router(v1.api, prefix="/api")
